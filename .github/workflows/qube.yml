@@ -1,0 +1,13 @@
+name: SonarQube Analysis
+on: [push, pull_request]
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install Sonar Scanner
+        run: |
+          wget -qO- https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip | sudo unzip -d /usr/local/bin -
+      - name: Run SonarQube Analysis
+        run: sonar-scanner -Dsonar.projectKey=MLOps_Project -Dsonar.host.url=https://sonarcloud.io
