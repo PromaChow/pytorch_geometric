@@ -59,3 +59,5 @@ if args.profile:
     rename_profile_file('citation', APPNP.__name__, args.dataset,
                         str(args.random_splits),
                         'inference' if args.inference else 'train')
+
+
