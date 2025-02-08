@@ -42,10 +42,21 @@ jobs:
           radon hal . >> metrics_report.txt
 
       # Extended metrics with Lizard
-      - name: Analyze with Lizard
+      - name: Install Lizard
+        run: pip install lizard
+
+      - name: Check Repo Files
+        run: ls -R # Debugging step to ensure files exist
+
+      - name: Run Lizard Analysis
         run: |
           echo -e "\n=== Detailed Code Metrics ===" >> metrics_report.txt
-          lizard . --CCN 10 --length 100 --arguments 5 --extension duplicate --modified --working_threads 1 >> metrics_report.txt
+          lizard . --CCN 10 --length 100 --arguments 5 --modified --working_threads 1 >> metrics_report.txt
+
+      #   - name: Analyze with Lizard
+      #     run: |
+      #       echo -e "\n=== Detailed Code Metrics ===" >> metrics_report.txt
+      #       lizard . --CCN 10 --length 100 --arguments 5 --extension duplicate --modified --working_threads 1 >> metrics_report.txt
 
       # Code quality metrics with Pylint
       - name: Analyze with Pylint
