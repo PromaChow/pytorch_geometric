@@ -29,59 +29,34 @@ jobs:
       # Basic metrics with Radon
       - name: Analyze with Radon
         run: |
+          mkdir -p metrics
           echo "=== Cyclomatic Complexity ===" > metrics_report.txt
-          radon cc . --show-complexity --average >> metrics_report.txt
+          find . -name "*.py" | xargs radon cc --show-complexity --average >> metrics_report.txt || true
 
           echo -e "\n=== Maintainability Index ===" >> metrics_report.txt
-          radon mi . --show >> metrics_report.txt
+          find . -name "*.py" | xargs radon mi --show >> metrics_report.txt || true
 
           echo -e "\n=== Raw Metrics ===" >> metrics_report.txt
-          radon raw . --summary >> metrics_report.txt
+          find . -name "*.py" | xargs radon raw --summary >> metrics_report.txt || true
 
           echo -e "\n=== Halstead Metrics ===" >> metrics_report.txt
-          radon hal . >> metrics_report.txt
+          find . -name "*.py" | xargs radon hal >> metrics_report.txt || true
 
-      # Extended metrics with Lizard
-      - name: Install Lizard
-        run: pip install lizard
-
-      - name: Check Repo Files
-        run: ls -R # Debugging step to ensure files exist
+      - name: Check Python Files
+        run: |
+          echo "Found Python files:"
+          find . -name "*.py" -not -path "*/\.*"
 
       - name: Run Lizard Analysis
         run: |
           echo -e "\n=== Detailed Code Metrics ===" >> metrics_report.txt
-          lizard . --CCN 10 --length 100 --arguments 5 --modified --working_threads 1 >> metrics_report.txt
-
-      #   - name: Analyze with Lizard
-      #     run: |
-      #       echo -e "\n=== Detailed Code Metrics ===" >> metrics_report.txt
-      #       lizard . --CCN 10 --length 100 --arguments 5 --extension duplicate --modified --working_threads 1 >> metrics_report.txt
+          lizard . --CCN 10 --length 100 --arguments 5 --modified --working_threads 1 >> metrics_report.txt || true
 
       # Code quality metrics with Pylint
       - name: Analyze with Pylint
         run: |
           echo -e "\n=== Code Quality Metrics ===" >> metrics_report.txt
-          pylint --output-format=text . || true >> metrics_report.txt
-
-      # Cognitive Complexity Analysis
-      # - name: Analyze Cognitive Complexity
-      #   run: |
-      #     echo -e "\n=== Cognitive Complexity ===" >> metrics_report.txt
-      #     cognitive-complexity . >> metrics_report.txt
-
-      # CLOC for detailed line counts
-      # - name: Run CLOC Analysis
-      #   run: |
-      #     echo -e "\n=== CLOC Analysis ===" >> metrics_report.txt
-      #     cloc . --by-file --xml --out=metrics/cloc.xml
-      #     cloc . --by-file >> metrics_report.txt
-
-      # SCC for additional complexity metrics
-      # - name: Run SCC Analysis
-      #   run: |
-      #     echo -e "\n=== SCC Analysis ===" >> metrics_report.txt
-      #     scc . >> metrics_report.txt
+          find . -name "*.py" -not -path "*/\.*" -exec pylint --output-format=text {} + >> metrics_report.txt || true
 
       # Xenon for threshold checking
       - name: Check complexity thresholds with Xenon
@@ -92,12 +67,11 @@ jobs:
       # Generate detailed report in multiple formats
       - name: Generate detailed reports
         run: |
-          mkdir -p metrics
           # JSON reports
-          radon cc . --json > metrics/complexity.json
-          radon raw . --json > metrics/raw_metrics.json
-          radon hal . --json > metrics/halstead.json
-          lizard . --xml > metrics/lizard_report.xml
+          radon cc . --json > metrics/complexity.json || true
+          radon raw . --json > metrics/raw_metrics.json || true
+          radon hal . --json > metrics/halstead.json || true
+          lizard . --xml > metrics/lizard_report.xml || true
           cp metrics_report.txt metrics/full_report.txt
 
       - name: Upload metrics results
