@@ -14,6 +14,10 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: start-measurement
       - name: Add PR labels
         uses: actions/labeler@v5
         continue-on-error: true
@@ -26,6 +30,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: start-measurement
       - name: Add PR author
         uses: samspills/assign-pr-to-author@v1.0
         continue-on-error: true

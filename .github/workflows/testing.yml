@@ -29,6 +29,10 @@ jobs:
             python-version: '3.10'
 
     steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: start-measurement
       - name: Checkout repository
         uses: actions/checkout@v4
         with:

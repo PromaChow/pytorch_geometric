@@ -1,0 +1,23 @@
+name: CI Workflow with Eco-CI Measure
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch: # Enables manual execution
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Build
+        run: |
+          echo "Running build process..."
+          # Your build commands here
+
+      - name: Measure CI Carbon Footprint
+        run: |
+          curl -sL https://raw.githubusercontent.com/cloud-carbon-footprint/ecoci/main/install.sh | bash
+          eco-ci-measure
