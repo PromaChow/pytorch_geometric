@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: start-measurement
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -79,3 +84,18 @@ jobs:
         with:
           name: code-metrics
           path: metrics/
+
+      - name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: display-results
+          json-output: true
+
+      - name: Convert JSON to CSV
+        if: always()
+        run: |
+          if [ -f /tmp/eco-ci/total-data.json ]; then
+            jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' /tmp/eco-ci/total-data.json > eco_results.csv
+          else
+            echo "No JSON output found, skipping conversion."
+          fi

@@ -37,3 +37,18 @@ jobs:
         run: |
           FULL_TEST=1 pytest
         shell: bash
+
+      - name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v4
+        with:
+          task: display-results
+          json-output: true
+
+      - name: Convert JSON to CSV
+        if: always()
+        run: |
+          if [ -f /tmp/eco-ci/total-data.json ]; then
+            jq -r '(.[0] | keys_unsorted) as $keys | $keys, map([.[ $keys[] ]])[] | @csv' /tmp/eco-ci/total-data.json > eco_results.csv
+          else
+            echo "No JSON output found, skipping conversion."
+          fi
